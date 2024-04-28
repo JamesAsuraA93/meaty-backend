@@ -1,0 +1,271 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  birthdate DateTime?
+  // username  String?
+
+  avatar   File?  @relation(fields: [fileId], references: [id])
+  email    String @unique
+  password String @default("")
+  role     Role   @default(USER)
+  credit   Float  @default(0)
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+  Order     Order[]
+  Address   Address[]
+  SysLog    SysLog[]
+
+  fileId Int?
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  description String?
+  price       Float
+
+  Image File? @relation(fields: [fileId], references: [id])
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  ProductDetail ProductDetail[]
+  Stock         Stock[]
+  OrderItem     OrderItem[]
+  Comment       Comment[]
+
+  fileId Int?
+}
+
+model ProductDetail {
+  id           Int     @id @default(autoincrement())
+  productId    Int
+  timeDelivery String?
+  producedIn   String?
+  brand        String?
+  thcMin       Float?
+  thcMax       Float?
+  cbdMin       Float?
+  cbdMax       Float?
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Stock {
+  id        Int @id @default(autoincrement())
+  productId Int
+  quantity  Int
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  totalPriceAmount Float
+  discount         Float
+  deliveryFee      Float
+  status           OrderStatus
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user    User        @relation(fields: [userId], references: [id])
+  items   OrderItem[]
+  Payment Payment[]
+}
+
+model OrderItem {
+  id        Int   @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  subtotal  Float
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  userId       Int
+  firstname    String
+  lastname     String
+  phone        String
+  email        String
+  addressLine1 String
+  addressLine2 String?
+  subDistrict  String
+  district     String
+  province     String
+  country      String
+  postalCode   String
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id      Int           @id @default(autoincrement())
+  orderId Int
+  amount  Float
+  method  PaymentMethod
+  status  PaymentStatus
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model Comment {
+  id             Int    @id @default(autoincrement())
+  productId      Int
+  comment        String
+  sentimentScore Float?
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model SysLog {
+  id            Int        @id @default(autoincrement())
+  userId        Int
+  actionType    ActionType
+  tableAffected String
+  primaryKey    Int
+  details       String
+  timestamp     DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// export type UploadedFile = {
+//   fieldname: string; // file
+//   originalname: string; // myPicture.png
+//   encoding: string; // 7bit
+//   mimetype: string; // image/png
+//   destination: string; // ./public/uploads
+//   filename: string; // 1571575008566-myPicture.png
+//   path: string; // public/uploads/1571575008566-myPicture.png
+//   size: number; // 1255
+// };
+
+model File {
+  id        Int       @id @default(autoincrement())
+  filename  String
+  mimetype  String
+  encoding  String
+  path      String
+  size      Int
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  User    User[]
+  Product Product[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPING
+  DELIVERED
+  CANCELED
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum ActionType {
+  CREATE
+  UPDATE
+  DELETE
+}

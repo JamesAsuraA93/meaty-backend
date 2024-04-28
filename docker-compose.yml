@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgresql:
+    # container_name: postgresql-meaty
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      # POSTGRES_DB: mydb
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgresql_data:
