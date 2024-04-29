@@ -1,8 +1,11 @@
 # run all services
 yarn start meaty-products --watch & \
 yarn start upload --watch & \
-# yarn start meaty-orders & \
-# yarn start meaty-auth & \
+yarn start orders --watch & \
+yarn start payment --watch & \
+yarn start sys_log --watch & \
+yarn start users --watch & \
+yarn start auth --watch & \
 
 
 
