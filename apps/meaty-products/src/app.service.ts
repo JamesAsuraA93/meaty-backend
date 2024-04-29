@@ -17,9 +17,9 @@ export class AppService {
       where: {
         id: +id,
       },
-      include: {
-        Image: true,
-      },
+      // include: {
+      //   Image: true,
+      // },
     });
 
     if (!product) {
@@ -79,22 +79,23 @@ export class AppService {
     // });
   }
 
-  async createProduct(createProductDto: CreateProductDto, file_id: number) {
+  async createProduct(createProductDto: CreateProductDto) {
+    // , file_id: number
     // console.log('createProductDto', createProductDto);
     // console.log('file_id', file_id);
-    if (!file_id || file_id === 0) {
-      throw new Error('File upload not implemented');
-    }
+    // if (!file_id || file_id === 0) {
+    //   throw new Error('File upload not implemented');
+    // }
 
-    const fileData = await this.prisma.file.findUnique({
-      where: {
-        id: file_id,
-      },
-    });
+    // const fileData = await this.prisma.file.findUnique({
+    //   where: {
+    //     id: file_id,
+    //   },
+    // });
 
-    if (!fileData) {
-      throw new Error('File not found');
-    }
+    // if (!fileData) {
+    //   throw new Error('File not found');
+    // }
 
     return await this.prisma.product.create({
       data: {
@@ -117,15 +118,16 @@ export class AppService {
           },
         },
         description: createProductDto.description,
-        Image: {
-          create: {
-            encoding: fileData.encoding,
-            filename: fileData.filename,
-            mimetype: fileData.mimetype,
-            path: fileData.path,
-            size: fileData.size,
-          },
-        },
+        filePath: createProductDto.filePath,
+        // Image: {
+        //   create: {
+        //     encoding: fileData.encoding,
+        //     filename: fileData.filename,
+        //     mimetype: fileData.mimetype,
+        //     path: fileData.path,
+        //     size: fileData.size,
+        //   },
+        // },
       },
     });
   }
@@ -133,21 +135,21 @@ export class AppService {
   async updateProduct(
     id: number,
     updateProductDto: UpdateProductDto,
-    file_id: number,
+    // file_id: number,
   ) {
-    if (!file_id || file_id === 0) {
-      throw new Error('File upload not implemented');
-    }
+    // if (!file_id || file_id === 0) {
+    //   throw new Error('File upload not implemented');
+    // }
 
-    const fileData = await this.prisma.file.findUnique({
-      where: {
-        id: file_id,
-      },
-    });
+    // const fileData = await this.prisma.file.findUnique({
+    //   where: {
+    //     id: file_id,
+    //   },
+    // });
 
-    if (!fileData) {
-      throw new Error('File not found');
-    }
+    // if (!fileData) {
+    //   throw new Error('File not found');
+    // }
 
     return await this.prisma.product.update({
       where: { id },
@@ -155,7 +157,8 @@ export class AppService {
         name: updateProductDto.name,
         price: updateProductDto.price,
         description: updateProductDto.description,
-        fileId: fileData.id,
+        // fileId: fileData.id,
+        filePath: updateProductDto.filePath,
         // image: {
         //   update: {
         //     where: {

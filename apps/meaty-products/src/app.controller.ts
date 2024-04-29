@@ -41,8 +41,8 @@ export class AppController {
   @Post()
   async createProduct(@Body() createProductDto: CreateProductDto) {
     try {
-      const file_id: number = +createProductDto.fileId;
-      return await this.appService.createProduct(createProductDto, file_id);
+      // const file_id: number = +createProductDto.fileId;
+      return await this.appService.createProduct(createProductDto);
     } catch (error) {
       // console.error(error);
       return {
@@ -57,7 +57,7 @@ export class AppController {
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    const file_id: number = +updateProductDto.fileId;
-    return await this.appService.updateProduct(+id, updateProductDto, file_id);
+    // const file_id: number = +updateProductDto.fileId;
+    return await this.appService.updateProduct(+id, updateProductDto);
   }
 }

@@ -100,12 +100,12 @@ export class CreateProductDto {
   })
   timeDelivery: string;
 
-  @IsNumber()
-  @ApiProperty({
-    description: 'The file id of the product',
-    name: 'fileId',
-  })
-  fileId: number;
+  // @IsNumber()
+  // @ApiProperty({
+  //   description: 'The file id of the product',
+  //   name: 'fileId',
+  // })
+  // fileId: number;
 
   @IsString()
   @IsNotEmpty()
