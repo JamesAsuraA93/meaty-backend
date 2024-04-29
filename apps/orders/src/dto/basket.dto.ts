@@ -39,12 +39,16 @@ export class UpdateBasketDto extends CreateBasketDto {
   //
 }
 
+// export class PaymentDto {
+
+// }
+
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'The basketId of the product',
+    description: 'The basketId of the product list',
     name: 'basketId',
   })
-  basketId: string;
+  basketId: string[];
 }

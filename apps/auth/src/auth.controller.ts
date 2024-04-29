@@ -96,6 +96,7 @@ export class AuthController {
   }
 
   @ApiTags('Admin')
+  // @UseGuards(AuthGuard)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Put('updateUserCredit/:id')

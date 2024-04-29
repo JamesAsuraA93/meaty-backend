@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
 import { CreateBasketDto, CreateOrderDto } from './dto/basket.dto';
+import { UpdateOrderDto } from './dto/order.dto';
+import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class OrdersService {
@@ -10,6 +11,43 @@ export class OrdersService {
 
   getHello(): string {
     return 'Hello World!';
+  }
+
+  async getAllOrders() {
+    const orders = await this.prisma.order.findMany({
+      include: {
+        items: true,
+        Payment: true,
+        user: true,
+      },
+    });
+    return orders;
+  }
+
+  async getOrderById(id: number) {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        items: true,
+        Payment: true,
+        user: true,
+      },
+    });
+    return order;
+  }
+
+  async updateOrderStatus(id: number, dto: UpdateOrderDto) {
+    const order = await this.prisma.order.update({
+      where: {
+        id,
+      },
+      data: {
+        status: dto.status,
+      },
+    });
+    return order;
   }
 
   async getBasket(email: string) {
@@ -97,14 +135,11 @@ export class OrdersService {
       },
     });
 
-    // console.log(basketItems.);
-    // const sumBasketItems = basketItems.reduce((acc, item) => {
-    //   return {
-    //     x: (acc.price * acc.quantity) + (item.product.price * item.quantity)
-    //   }
-    // })
-
-    // console.log(sumBasketItems)
+    const totalPrice: number = basketItems
+      .filter((item) => item.id === +dto.basketId)
+      .reduce((acc, curr) => {
+        return acc + curr.price * curr.quantity;
+      }, 0);
 
     const order = await this.prisma.order.create({
       data: {
@@ -112,7 +147,7 @@ export class OrdersService {
         deliveryFee: 30,
         discount: 0,
         status: 'PENDING',
-        totalPriceAmount: 0,
+        totalPriceAmount: totalPrice,
         items: {
           create: basketItems.map((item) => {
             return {
@@ -123,31 +158,11 @@ export class OrdersService {
                 },
               },
               productId: item.productId,
-              subtotal: 0,
+              subtotal: item.price * item.quantity,
             };
           }),
         },
-        // create: {
-        //   quantity: dto.quantity,
-        //   product: {
-        //     connect: {
-        //       id: +dto.productId,
-        //     },
-        //   },
-        // }
-        // create: [
-        //   {
-        //     quantity: dto.quantity,
-        //     product: {
-        //       connect: {
-        //         id: +dto.productId,
-        //       },
-        //     },
-        //   },
-        // ],
       },
-      // },
-      // );
     });
 
     return order;
