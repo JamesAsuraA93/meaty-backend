@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./apps/meaty-products/test/jest-e2e.json",
     "start:dev:all": "./scripts/start_all_services.sh",
     "close:dev:all": "./scripts/close_all_services.sh",
-    "allow:exec": "chmod +x \"scripts/start_all_services.sh\" & chmod +x \"scripts/close_all_services.sh\""
+    "allow:exec": "chmod +x \"scripts/start_all_services.sh\" & chmod +x \"scripts/close_all_services.sh\"",
+    "migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.8",
