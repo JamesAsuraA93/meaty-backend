@@ -22,7 +22,38 @@ export class AuthService {
 
   async getAllUser() {
     try {
-      return await this.prisma.user.findMany();
+      return await this.prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          credit: true,
+          birthdate: true,
+          Address: true,
+          Basket: true,
+          filePath: true,
+          Order: true,
+        },
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getUserById(id: number) {
+    try {
+      return await this.prisma.user.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          Address: true,
+          Basket: true,
+          File: true,
+          Order: true,
+          SysLog: true,
+        },
+      });
     } catch (error) {
       return error;
     }

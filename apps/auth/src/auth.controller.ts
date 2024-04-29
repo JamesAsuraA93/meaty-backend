@@ -71,14 +71,20 @@ export class AuthController {
     return await this.authService.getMeByEmail(email);
   }
 
-  // register
-  // get me
   @ApiTags('Admin')
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('allUser')
   async getAllUser() {
     return await this.authService.getAllUser();
+  }
+
+  @ApiTags('Admin')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('getUser/:id')
+  async getUser(@Param('id') id: string) {
+    return await this.authService.getUserById(+id);
   }
 
   @ApiTags('Admin')
