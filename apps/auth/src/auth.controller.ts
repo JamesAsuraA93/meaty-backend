@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Request,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
@@ -60,7 +60,7 @@ export class AuthController {
   // @UseGuards(AuthGuard(AuthStrategy.JWT))
   @ApiSecurity(AuthStrategy.JWT)
   @Get('profile')
-  async getProfile(@Request() req) {
+  async getProfile(@Req() req) {
     const email = req.user.email;
     return await this.authService.getMeByEmail(email);
   }

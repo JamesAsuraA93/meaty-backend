@@ -9,7 +9,13 @@ export class AppService {
   }
 
   async getProducts() {
-    return await this.prisma.product.findMany();
+    return await this.prisma.product.findMany({
+      include: {
+        Stock: true,
+        ProductDetail: true,
+        Comment: true,
+      },
+    });
   }
 
   async getProduct(id: number) {

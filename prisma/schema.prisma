@@ -38,8 +38,9 @@ model User {
   filePath String?
 
   // fileId Int?
-  File   File? @relation(fields: [fileId], references: [id])
+  File   File?    @relation(fields: [fileId], references: [id])
   fileId Int?
+  Basket Basket[]
 }
 
 model Product {
@@ -65,8 +66,9 @@ model Product {
   filePath String?
 
   // fileId Int?
-  File   File? @relation(fields: [fileId], references: [id])
+  File   File?    @relation(fields: [fileId], references: [id])
   fileId Int?
+  Basket Basket[]
 }
 
 model ProductDetail {
@@ -104,6 +106,24 @@ model Stock {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Basket {
+  id        Int @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int
+
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
 }
 
