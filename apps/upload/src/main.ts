@@ -11,6 +11,7 @@ import { UploadModule } from './upload.module';
 // import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AuthStrategy } from 'apps/auth/src/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(UploadModule);
@@ -21,6 +22,14 @@ async function bootstrap() {
     .setTitle('Meaty API UPLOAD')
     .setDescription('The Meaty API UPLOAD API description')
     .setVersion('0.1')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      AuthStrategy.JWT,
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

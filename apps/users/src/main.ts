@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { UsersModule } from './users.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AuthStrategy } from 'apps/auth/src/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(UsersModule);
@@ -9,6 +10,14 @@ async function bootstrap() {
     .setTitle('Meaty API USERS')
     .setDescription('The Meaty API USERS description')
     .setVersion('0.1')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      AuthStrategy.JWT,
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
