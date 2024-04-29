@@ -62,11 +62,38 @@ export class UploadController {
   )
   async uploadFile(
     @Res() res,
-    @Param('path') path: string,
+    // @Param('path') path: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    const path: string = 'public/img/';
     return res.json(await this.uploadService.uploadFile(file, path));
   }
+  // async uploadFile(
+  //   @Res() res,
+  //   // @Param('path') path: string,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   // service upload file to prisma
+
+  //   // const file_input = await this.uploadService.uploadFile(file, path);
+
+  //   // const file_db = await this.uploadService.createFile({
+  //   //   filename: file_input.file.filename,
+  //   //   mimetype: file_input.file.mimetype,
+  //   //   path: file_input.file.path,
+  //   //   size: file_input.file.size,
+  //   // });
+
+  //   // console.log({
+  //   //   file_input,
+  //   //   file_db,
+  //   // });
+
+  //   return {
+  //     file: await this.uploadService.uploadFile(file, 'path'),
+  //   };
+  //   // return { file: file_input };
+  // }
   // async SignleFile(@UploadedFile() file: Express.Multer.File) {
   //   return { file: file };
   // }

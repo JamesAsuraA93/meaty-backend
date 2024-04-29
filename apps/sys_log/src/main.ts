@@ -12,8 +12,8 @@ async function bootstrap() {
   const app = await NestFactory.create(SysLogModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Meaty API')
-    .setDescription('The Meaty API description')
+    .setTitle('Meaty API SYS_LOG')
+    .setDescription('The Meaty API SYS_LOG description')
     .setVersion('0.1')
     .build();
 

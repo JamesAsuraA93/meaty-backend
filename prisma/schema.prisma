@@ -35,6 +35,8 @@ model User {
   Address   Address[]
   SysLog    SysLog[]
 
+  filePath String?
+
   fileId Int?
 }
 
@@ -57,6 +59,8 @@ model Product {
   Stock         Stock[]
   OrderItem     OrderItem[]
   Comment       Comment[]
+
+  filePath String?
 
   fileId Int?
 }

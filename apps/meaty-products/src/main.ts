@@ -6,8 +6,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Meaty API')
-    .setDescription('The Meaty API description')
+    .setTitle('Meaty API PRODUCTS')
+    .setDescription('The Meaty API PRODUCTS description')
     .setVersion('0.1')
     .build();
 

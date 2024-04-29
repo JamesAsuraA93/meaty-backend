@@ -18,8 +18,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-    .setTitle('Meaty-Upload')
-    .setDescription('The Meaty-Upload API description')
+    .setTitle('Meaty API UPLOAD')
+    .setDescription('The Meaty API UPLOAD API description')
     .setVersion('0.1')
     .build();
 

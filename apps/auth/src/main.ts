@@ -15,8 +15,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Meaty API')
-    .setDescription('The Meaty API description')
+    .setTitle('Meaty API AUTH')
+    .setDescription('The Meaty API AUTH description')
     .setVersion('0.1')
     .build();
 

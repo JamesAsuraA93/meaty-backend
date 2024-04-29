@@ -106,6 +106,14 @@ export class CreateProductDto {
     name: 'fileId',
   })
   fileId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The image of the product',
+    name: 'filePath',
+  })
+  filePath: string;
 }
 
 export class UpdateProductDto extends CreateProductDto {

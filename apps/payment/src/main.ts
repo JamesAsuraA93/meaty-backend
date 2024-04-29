@@ -12,8 +12,8 @@ async function bootstrap() {
   const app = await NestFactory.create(PaymentModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Meaty API')
-    .setDescription('The Meaty API description')
+    .setTitle('Meaty API PAYMENT')
+    .setDescription('The Meaty API PAYMENT description')
     .setVersion('0.1')
     .build();
 
