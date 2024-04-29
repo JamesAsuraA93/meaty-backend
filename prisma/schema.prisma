@@ -110,10 +110,11 @@ model Stock {
 }
 
 model Basket {
-  id        Int @id @default(autoincrement())
+  id        Int   @id @default(autoincrement())
   userId    Int
   productId Int
   quantity  Int
+  price     Float @default(0)
 
   createdBy Int?
   updatedBy Int?

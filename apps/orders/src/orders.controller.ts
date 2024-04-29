@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateBasketDto } from './dto/basket.dto';
 
@@ -27,14 +27,31 @@ export class OrdersController {
     return await this.ordersService.addToBasket(email, dto);
   }
 
-  // remove from basket
+  // edit basket item
   @Post('basket/:id')
+  async editBasket(@Req() req, @Body() dto: CreateBasketDto) {
+    const email = req.user.email;
+    return await this.ordersService.addToBasket(email, dto);
+  }
+
+  // remove from basket
+  @Delete('basket/:id')
   async removeFromBasket(@Req() req, @Body() dto: CreateBasketDto) {
     const email = req.user.email;
     return await this.ordersService.removeFromBasket(email, dto);
   }
 
-  // checkout
+  // checkout create order
 
-  // edit basket item
+  @Get('orders')
+  async getOrders(@Req() req) {
+    const email = req.user.email;
+    return await this.ordersService.getOrders(email);
+  }
+
+  // @Post('checkout')
+  // async checkout(@Req() req, @Body() dto: CreateBasketDto){
+  //   const email = req.user.email;
+  //   return await this.ordersService.checkout(email);
+  // }
 }

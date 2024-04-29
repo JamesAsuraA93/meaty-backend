@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
-import { CreateBasketDto } from './dto/basket.dto';
+import { CreateBasketDto, CreateOrderDto } from './dto/basket.dto';
 
 @Injectable()
 export class OrdersService {
@@ -60,4 +60,131 @@ export class OrdersService {
     });
     return item;
   }
+
+  async getOrders(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    const orders = await this.prisma.order.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        items: true,
+        Payment: true,
+        user: true,
+      },
+    });
+    return orders;
+  }
+
+  async createOrder(email: string, dto: CreateOrderDto) {
+    console.log(email, dto);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const basketItems = await this.prisma.basket.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    // console.log(basketItems.);
+    // const sumBasketItems = basketItems.reduce((acc, item) => {
+    //   return {
+    //     x: (acc.price * acc.quantity) + (item.product.price * item.quantity)
+    //   }
+    // })
+
+    // console.log(sumBasketItems)
+
+    const order = await this.prisma.order.create({
+      data: {
+        userId: user.id,
+        deliveryFee: 30,
+        discount: 0,
+        status: 'PENDING',
+        totalPriceAmount: 0,
+        items: {
+          create: basketItems.map((item) => {
+            return {
+              quantity: item.quantity,
+              product: {
+                connect: {
+                  id: item.productId,
+                },
+              },
+              productId: item.productId,
+              subtotal: 0,
+            };
+          }),
+        },
+        // create: {
+        //   quantity: dto.quantity,
+        //   product: {
+        //     connect: {
+        //       id: +dto.productId,
+        //     },
+        //   },
+        // }
+        // create: [
+        //   {
+        //     quantity: dto.quantity,
+        //     product: {
+        //       connect: {
+        //         id: +dto.productId,
+        //       },
+        //     },
+        //   },
+        // ],
+      },
+      // },
+      // );
+    });
+
+    return order;
+  }
+
+  // async checkout(email: string) {
+  //   const user = await this.prisma.user.findUnique({
+  //     where: {
+  //       email: email,
+  //     },
+  //   });
+
+  //   const basket = await this.prisma.basket.findMany({
+  //     where: {
+  //       userId: user.id,
+  //     },
+  //   });
+
+  //     const order = await this.prisma.order.create({
+  //       data: {
+  //         userId: user.id,
+  //         deliveryFee: 0,
+  //         discount: 0,
+  //         status: "PENDING",
+  //         totalPriceAmount: basket.reduce((acc, item) => {
+  //           return acc + item.
+  //         }, 0),
+  //       },
+  //     },
+  //     });
+
+  //     await this.prisma.basket.deleteMany({
+  //       where: {
+  //         userId: user.id,
+  //       },
+  //     });
+
+  // return order;
+  // }
 }

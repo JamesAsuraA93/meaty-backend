@@ -4,23 +4,29 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto/users.dto';
-import { Public } from './public-strategy';
 import { AuthStrategy } from './constants';
-import { ApiSecurity } from '@nestjs/swagger';
+import {
+  CreateUserDto,
+  LoginUserDto,
+  UpdateUserCreditDto,
+} from './dto/users.dto';
+import { Public } from './public-strategy';
 // import { AuthGuard } from '@nestjs/passport';
 // import { Public } from '@prisma/client/runtime/library';
 // import { Public } from "./public-strategy";
 // import { AuthGuard } from './auth.guard';
 // import { Request } from 'express';
 
-@Controller()
+@Controller('')
 export class AuthController {
   constructor(private readonly authService: AuthService) {
     //
@@ -67,4 +73,27 @@ export class AuthController {
 
   // register
   // get me
+  @ApiTags('Admin')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('allUser')
+  async getAllUser() {
+    return await this.authService.getAllUser();
+  }
+
+  @ApiTags('Admin')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('createUser')
+  async createUser(@Body() data: CreateUserDto) {
+    return await this.authService.signUp(data);
+  }
+
+  @ApiTags('Admin')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Put('updateUserCredit/:id')
+  async updateUser(@Param('id') id: string, @Body() data: UpdateUserCreditDto) {
+    return await this.authService.updateCreditUser(+id, data);
+  }
 }

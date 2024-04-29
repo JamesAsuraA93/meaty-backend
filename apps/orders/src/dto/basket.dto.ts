@@ -25,4 +25,26 @@ export class CreateBasketDto {
     name: 'quantity',
   })
   quantity: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The price of the product',
+    name: 'price',
+  })
+  price: number;
+}
+
+export class UpdateBasketDto extends CreateBasketDto {
+  //
+}
+
+export class CreateOrderDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The basketId of the product',
+    name: 'basketId',
+  })
+  basketId: string;
 }

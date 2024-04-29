@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 import { IsDate, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
@@ -75,3 +76,27 @@ export class LoginUserDto {
   })
   password: string;
 }
+
+export class UpdateUserCreditDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The credit of the product',
+    name: 'credit',
+  })
+  credit: string;
+}
+
+export class AdminCreateUserDto extends CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The role of the product',
+    name: 'role',
+  })
+  role: Role;
+}
+
+// export class AdminUpdateUserDto extends UpdateUserDto {
+
+// }

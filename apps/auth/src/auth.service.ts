@@ -1,7 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto, LoginUserDto } from './dto/users.dto';
+import {
+  CreateUserDto,
+  LoginUserDto,
+  UpdateUserCreditDto,
+} from './dto/users.dto';
+import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +18,27 @@ export class AuthService {
 
   getHello(): string {
     return 'Hello World!';
+  }
+
+  async getAllUser() {
+    try {
+      return await this.prisma.user.findMany();
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async updateCreditUser(id: number, data: UpdateUserCreditDto) {
+    const credit: number = +data.credit;
+
+    return await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        credit: credit,
+      },
+    });
   }
 
   // register create
