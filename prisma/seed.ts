@@ -14,7 +14,7 @@ async function main() {
       name: 'Gancha #1',
       description: 'Description of Gancha #1',
       price: 35,
-      image: {
+      Image: {
         create: {
           encoding: 'utf-8',
           filename: 'gancha.jpg',

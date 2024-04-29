@@ -13,6 +13,7 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql/data
     restart: always
+  
 
 volumes:
   postgresql_data:
