@@ -122,6 +122,8 @@ export class AuthService {
         filePath: true,
         id: true,
         role: true,
+        Basket: true,
+        credit: true,
       },
 
       // select: {
