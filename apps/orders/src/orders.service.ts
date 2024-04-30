@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateBasketDto, CreateOrderDto } from './dto/basket.dto';
 import { UpdateOrderDto } from './dto/order.dto';
 import { PrismaService } from './prisma/prisma.service';
+import { PaymentMethod } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -29,7 +30,6 @@ export class OrdersService {
           select: {
             product: {
               select: {
-                // id: true,
                 name: true,
                 price: true,
                 Comment: {
@@ -80,10 +80,6 @@ export class OrdersService {
   }
 
   async checkout(email: string, dto: CreateOrderDto) {
-    // console.log({
-    //   email,
-    //   dto,
-    // });
     const user = await this.prisma.user.findUnique({
       where: {
         email: email,
@@ -113,19 +109,6 @@ export class OrdersService {
       return dto.basketId.includes(item.id.toString());
     });
 
-    // const selectedBasket = await this.prisma.basket.findMany({
-    //   where: {
-    //     userId: user.id,
-    //     id: {
-    //       equals: +dto.basketId,
-    //     },
-    //   },
-    // });
-
-    // console.log({
-    //   selectedBasket,
-    // });
-
     const order = await this.prisma.order.create({
       data: {
         // userId: user.id,
@@ -146,35 +129,11 @@ export class OrdersService {
           },
         },
         userId: user.id,
-        // user: {
-        //   create: {
-        //     email: user.email,
-        //     Address: {
-        //       create: {
-        //         addressLine1: dto.address,
-        //         country: 'Thailand',
-        //         district: dto.district,
-        //         email: dto.emailInfo,
-        //         firstname: dto.firstname,
-        //         lastname: dto.lastname,
-        //         phone: dto.phone,
-        //         postalCode: dto.postalCode,
-        //         province: dto.province,
-        //         subDistrict: dto.district,
-        //       },
-        //     },
-        //   },
-        // },
         items: {
           createMany: {
             data: selectedBasket.map((item) => {
               return {
                 quantity: item.quantity,
-                // product: {
-                //   connect: {
-                //     id: item.productId,
-                //   },
-                // },
                 subtotal: item.product.price * item.quantity,
                 productId: item.productId,
               };
@@ -184,21 +143,6 @@ export class OrdersService {
       },
     });
 
-    console.log({
-      selectedBasket,
-    });
-
-    console.log({
-      order,
-    });
-
-    console.log(
-      selectedBasket.reduce((acc, item) => {
-        return acc + item.product.price * item.quantity;
-      }, 0),
-    );
-
-    // re-cost credit user
     await this.prisma.user.update({
       where: {
         id: user.id,
@@ -206,10 +150,11 @@ export class OrdersService {
       data: {
         credit: {
           decrement:
-            15 +
-            selectedBasket.reduce((acc, item) => {
-              return acc + item.product.price * item.quantity;
-            }, 0),
+            (15 +
+              selectedBasket.reduce((acc, item) => {
+                return acc + item.product.price * item.quantity;
+              }, 0)) *
+            (dto.paymentType === PaymentMethod.CREDIT ? 1 : 0),
         },
       },
     });
