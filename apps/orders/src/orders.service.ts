@@ -42,6 +42,11 @@ export class OrdersService {
                 ProductDetail: {
                   select: {
                     brand: true,
+                    cbdMax: true,
+                    cbdMin: true,
+                    thcMax: true,
+                    thcMin: true,
+                    timeDelivery: true,
                   },
                 },
                 filePath: true,
@@ -61,6 +66,9 @@ export class OrdersService {
                     status: true,
                   },
                 },
+                deliveryFee: true,
+                discount: true,
+                totalPriceAmount: true,
               },
             },
           },
@@ -86,6 +94,19 @@ export class OrdersService {
       where: {
         userId: user.id,
       },
+      select: {
+        id: true,
+        price: true,
+        quantity: true,
+        // productId: true,
+        product: true,
+        productId: true,
+        user: true,
+      },
+    });
+
+    console.log({
+      basket,
     });
 
     const selectedBasket = basket.filter((item) => {
@@ -101,6 +122,10 @@ export class OrdersService {
     //   },
     // });
 
+    // console.log({
+    //   selectedBasket,
+    // });
+
     const order = await this.prisma.order.create({
       data: {
         // userId: user.id,
@@ -109,12 +134,12 @@ export class OrdersService {
         discount: 0,
         status: 'PENDING',
         totalPriceAmount: selectedBasket.reduce((acc, item) => {
-          return acc + item.price * item.quantity;
+          return acc + item.product.price * item.quantity;
         }, 0),
         Payment: {
           create: {
             amount: selectedBasket.reduce((acc, item) => {
-              return acc + item.price * item.quantity;
+              return acc + item.product.price * item.quantity;
             }, 0),
             method: dto.paymentType,
             status: 'PENDING',
@@ -150,7 +175,7 @@ export class OrdersService {
                 //     id: item.productId,
                 //   },
                 // },
-                subtotal: item.price * item.quantity,
+                subtotal: item.product.price * item.quantity,
                 productId: item.productId,
               };
             }),
@@ -159,9 +184,35 @@ export class OrdersService {
       },
     });
 
-    // console.log({
-    //   order,
-    // });
+    console.log({
+      selectedBasket,
+    });
+
+    console.log({
+      order,
+    });
+
+    console.log(
+      selectedBasket.reduce((acc, item) => {
+        return acc + item.product.price * item.quantity;
+      }, 0),
+    );
+
+    // re-cost credit user
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        credit: {
+          decrement:
+            15 +
+            selectedBasket.reduce((acc, item) => {
+              return acc + item.product.price * item.quantity;
+            }, 0),
+        },
+      },
+    });
 
     await this.prisma.basket.deleteMany({
       where: {
