@@ -13,64 +13,154 @@ export class OrdersService {
     return 'Hello World!';
   }
 
+  // admin
   async getAllOrders() {
     const orders = await this.prisma.order.findMany({
-      include: {
-        items: true,
-        Payment: true,
-        user: true,
+      select: {
+        id: true,
+        status: true,
+        Payment: {
+          select: {
+            method: true,
+            status: true,
+          },
+        },
+        items: {
+          select: {
+            product: {
+              select: {
+                // id: true,
+                name: true,
+                price: true,
+                Comment: {
+                  select: {
+                    comment: true,
+                    id: true,
+                    sentimentScore: true,
+                  },
+                },
+                ProductDetail: {
+                  select: {
+                    brand: true,
+                  },
+                },
+                filePath: true,
+              },
+            },
+            quantity: true,
+            order: {
+              select: {
+                user: {
+                  select: {
+                    email: true,
+                  },
+                },
+                Payment: {
+                  select: {
+                    method: true,
+                    status: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
+
     return orders;
   }
 
   async checkout(email: string, dto: CreateOrderDto) {
+    // console.log({
+    //   email,
+    //   dto,
+    // });
     const user = await this.prisma.user.findUnique({
       where: {
         email: email,
       },
     });
 
-    // const basket = await this.prisma.basket.findMany({
-    //   where: {
-    //     userId: user.id,
-    //   },
-    // });
-
-    const selectedBasket = await this.prisma.basket.findMany({
+    const basket = await this.prisma.basket.findMany({
       where: {
         userId: user.id,
-        id: {
-          equals: +dto.basketId,
-        },
       },
     });
 
+    const selectedBasket = basket.filter((item) => {
+      return dto.basketId.includes(item.id.toString());
+    });
+
+    // const selectedBasket = await this.prisma.basket.findMany({
+    //   where: {
+    //     userId: user.id,
+    //     id: {
+    //       equals: +dto.basketId,
+    //     },
+    //   },
+    // });
+
     const order = await this.prisma.order.create({
       data: {
-        userId: user.id,
+        // userId: user.id,
+        // userId: user.id,
         deliveryFee: 15,
         discount: 0,
         status: 'PENDING',
         totalPriceAmount: selectedBasket.reduce((acc, item) => {
           return acc + item.price * item.quantity;
         }, 0),
-        items: {
-          create: selectedBasket.map((item) => {
-            return {
-              quantity: item.quantity,
-              product: {
-                connect: {
-                  id: item.productId,
-                },
+        Payment: {
+          create: {
+            amount: selectedBasket.reduce((acc, item) => {
+              return acc + item.price * item.quantity;
+            }, 0),
+            method: dto.paymentType,
+            status: 'PENDING',
+          },
+        },
+        user: {
+          create: {
+            email: user.email,
+            Address: {
+              create: {
+                addressLine1: dto.address,
+                country: 'Thailand',
+                district: dto.district,
+                email: dto.emailInfo,
+                firstname: dto.firstname,
+                lastname: dto.lastname,
+                phone: dto.phone,
+                postalCode: dto.postalCode,
+                province: dto.province,
+                subDistrict: dto.district,
               },
-              productId: item.productId,
-              subtotal: item.price * item.quantity,
-            };
-          }),
+            },
+          },
+        },
+        items: {
+          createMany: {
+            data: selectedBasket.map((item) => {
+              return {
+                quantity: item.quantity,
+                product: {
+                  connect: {
+                    id: item.productId,
+                  },
+                },
+                subtotal: item.price * item.quantity,
+                productId: item.productId,
+              };
+            }),
+          },
         },
       },
     });
+
+    // console.log({
+    //   order,
+    // });
 
     await this.prisma.basket.deleteMany({
       where: {
@@ -78,7 +168,30 @@ export class OrdersService {
       },
     });
 
-    return order;
+    return {
+      status: 'success',
+      order,
+    };
+  }
+
+  async getSelfOrders(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const orders = await this.prisma.order.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        items: true,
+        Payment: true,
+        user: true,
+      },
+    });
+    return orders;
   }
 
   async getOrderById(id: number) {

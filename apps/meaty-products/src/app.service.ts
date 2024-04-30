@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
+import { CreateCommentDto } from './dto/comment.dto';
 
 @Injectable()
 export class AppService {
@@ -57,6 +58,9 @@ export class AppService {
     const productDetail = await this.prisma.productDetail.findUnique({
       where: {
         id: product.id,
+      },
+      include: {
+        product: true,
       },
     });
 
@@ -231,6 +235,39 @@ export class AppService {
     return 'Hello World! Hi this is meaty-products API. with 3000';
   }
 
+  async getComments() {
+    return await this.prisma.comment.findMany();
+  }
+
+  async getCommentByIdProduct(id: number) {
+    return await this.prisma.comment.findMany({
+      where: {
+        productId: id,
+      },
+    });
+  }
+
+  async createComment(dto: CreateCommentDto) {
+    return await this.prisma.comment.create({
+      data: {
+        comment: dto.comment,
+        // productId: dto.productId,
+        sentimentScore: dto.sentimentScore,
+        product: {
+          connect: {
+            id: dto.productId,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteComment(id: number) {
+    return await this.prisma.comment.delete({
+      where: { id },
+    });
+  }
+
   // @Get()
   // findAll() {
   //   return this.findAll();
@@ -242,71 +279,3 @@ export class AppService {
   //   return 'Products';
   // }
 }
-
-// async onModuleInit() {
-//   await this.$connect();
-// }
-
-// async onModuleDestroy() {
-//   await this.$disconnect();
-// }
-
-// // App Product Service
-
-// async products() {
-//   return this.product.findMany();
-// }
-
-// async product(id: number) {
-//   return this.product.findUnique({
-//     where: { id },
-//   });
-// }
-
-// async createProduct(data: any) {
-//   return this.product.create({ data });
-// }
-
-// async updateProduct(id: number, data: any) {
-//   return this.product.update({
-//     where: { id },
-//     data,
-//   });
-// }
-
-// async deleteProduct(id: number) {
-//   return this.product.delete({
-//     where: { id },
-//   });
-// }
-
-// async deleteAllProducts() {
-//   return this.product.deleteMany();
-// }
-
-// async productImage(id: number) {
-//   return this.productImage.findUnique({
-//     where: { id },
-//   });
-// }
-
-// async createProductImage(data: any) {
-//   return this.productImage.create({ data });
-// }
-
-// async updateProductImage(id: number, data: any) {
-//   return this.productImage.update({
-//     where: { id },
-//     data,
-//   });
-// }
-
-// async deleteProductImage(id: number) {
-//   return this.productImage.delete({
-//     where: { id },
-//   });
-// }
-
-// async deleteAllProductImages() {
-//   return this.productImage.deleteMany();
-// }

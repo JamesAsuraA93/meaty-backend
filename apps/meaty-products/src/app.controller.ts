@@ -10,6 +10,7 @@ import {
 import { AppService } from './app.service';
 import { CreateProductDto, UpdateProductDto } from './dto/products.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateCommentDto } from './dto/comment.dto';
 
 @Controller('product')
 @ApiTags('Products')
@@ -59,5 +60,15 @@ export class AppController {
   ) {
     // const file_id: number = +updateProductDto.fileId;
     return await this.appService.updateProduct(+id, updateProductDto);
+  }
+
+  @Get('comment/:id')
+  async getComment(@Param('id') id: string) {
+    return await this.appService.getCommentByIdProduct(+id);
+  }
+
+  @Post('comment')
+  async createComment(@Body() body: CreateCommentDto) {
+    return await this.appService.createComment(body);
   }
 }

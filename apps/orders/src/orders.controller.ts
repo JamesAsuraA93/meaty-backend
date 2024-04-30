@@ -59,30 +59,18 @@ export class OrdersController {
     return await this.ordersService.removeFromBasket(email, dto);
   }
 
-  // checkout create order
+  // get self order
   @ApiTags('User')
-  @Get('orders')
-  async getOrders(@Req() req) {
-    const email = req.user.email;
+  @Get('my-orders/:email')
+  async getOrders(@Param('email') email: string) {
+    // const email = req.user.email;
     return await this.ordersService.getOrders(email);
   }
 
+  // checkout create order
   @ApiTags('User')
   @Post('checkout/:email')
-  async checkout(@Param() email: string, @Body() dto: CreateOrderDto) {
-    // const email = req.user.email;
-    // const {
-    //   basketId,
-    //   firstname,
-    //   lastname,
-    //   phone,
-    //   emailInfo,
-    //   address,
-    //   district,
-    //   paymentType,
-    //   postalCode,
-    //   province,
-    // } = dto;
+  async checkout(@Param('email') email: string, @Body() dto: CreateOrderDto) {
     return await this.ordersService.checkout(email, dto);
   }
 
