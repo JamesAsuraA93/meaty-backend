@@ -120,35 +120,36 @@ export class OrdersService {
             status: 'PENDING',
           },
         },
-        user: {
-          create: {
-            email: user.email,
-            Address: {
-              create: {
-                addressLine1: dto.address,
-                country: 'Thailand',
-                district: dto.district,
-                email: dto.emailInfo,
-                firstname: dto.firstname,
-                lastname: dto.lastname,
-                phone: dto.phone,
-                postalCode: dto.postalCode,
-                province: dto.province,
-                subDistrict: dto.district,
-              },
-            },
-          },
-        },
+        userId: user.id,
+        // user: {
+        //   create: {
+        //     email: user.email,
+        //     Address: {
+        //       create: {
+        //         addressLine1: dto.address,
+        //         country: 'Thailand',
+        //         district: dto.district,
+        //         email: dto.emailInfo,
+        //         firstname: dto.firstname,
+        //         lastname: dto.lastname,
+        //         phone: dto.phone,
+        //         postalCode: dto.postalCode,
+        //         province: dto.province,
+        //         subDistrict: dto.district,
+        //       },
+        //     },
+        //   },
+        // },
         items: {
           createMany: {
             data: selectedBasket.map((item) => {
               return {
                 quantity: item.quantity,
-                product: {
-                  connect: {
-                    id: item.productId,
-                  },
-                },
+                // product: {
+                //   connect: {
+                //     id: item.productId,
+                //   },
+                // },
                 subtotal: item.price * item.quantity,
                 productId: item.productId,
               };
