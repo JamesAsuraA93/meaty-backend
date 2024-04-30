@@ -9,7 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateBasketDto } from './dto/basket.dto';
+import { CreateBasketDto, CreateOrderDto } from './dto/basket.dto';
 import { UpdateOrderDto } from './dto/order.dto';
 import { OrdersService } from './orders.service';
 
@@ -31,19 +31,26 @@ export class OrdersController {
     return await this.ordersService.getBasket(email);
   }
 
+  @Get('basket/:email')
+  async getBasketByEmail(@Param('email') email: string) {
+    return await this.ordersService.getBasket(email);
+  }
+
   // add to basket
   @Post('basket')
-  async addToBasket(@Req() req, @Body() dto: CreateBasketDto) {
-    const email = req.user.email;
-    return await this.ordersService.addToBasket(email, dto);
+  async addToBasket(@Body() dto: CreateBasketDto) {
+    // console.log('user', req.authorization);
+    // const email = req.user.email;
+    // console.log('email', email);
+    return await this.ordersService.addToBasket(dto);
   }
 
   // edit basket item
-  @Post('basket/:id')
-  async editBasket(@Req() req, @Body() dto: CreateBasketDto) {
-    const email = req.user.email;
-    return await this.ordersService.addToBasket(email, dto);
-  }
+  // @Post('basket/:id')
+  // async editBasket(@Req() req, @Body() dto: CreateBasketDto) {
+  //   const email = req.user.email;
+  //   return await this.ordersService.addToBasket(email, dto);
+  // }
 
   // remove from basket
   @Delete('basket/:id')
@@ -58,6 +65,25 @@ export class OrdersController {
   async getOrders(@Req() req) {
     const email = req.user.email;
     return await this.ordersService.getOrders(email);
+  }
+
+  @ApiTags('User')
+  @Post('checkout/:email')
+  async checkout(@Param() email: string, @Body() dto: CreateOrderDto) {
+    // const email = req.user.email;
+    // const {
+    //   basketId,
+    //   firstname,
+    //   lastname,
+    //   phone,
+    //   emailInfo,
+    //   address,
+    //   district,
+    //   paymentType,
+    //   postalCode,
+    //   province,
+    // } = dto;
+    return await this.ordersService.checkout(email, dto);
   }
 
   @ApiTags('Admin')

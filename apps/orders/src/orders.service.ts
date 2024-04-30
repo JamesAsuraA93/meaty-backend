@@ -24,6 +24,63 @@ export class OrdersService {
     return orders;
   }
 
+  async checkout(email: string, dto: CreateOrderDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    // const basket = await this.prisma.basket.findMany({
+    //   where: {
+    //     userId: user.id,
+    //   },
+    // });
+
+    const selectedBasket = await this.prisma.basket.findMany({
+      where: {
+        userId: user.id,
+        id: {
+          equals: +dto.basketId,
+        },
+      },
+    });
+
+    const order = await this.prisma.order.create({
+      data: {
+        userId: user.id,
+        deliveryFee: 15,
+        discount: 0,
+        status: 'PENDING',
+        totalPriceAmount: selectedBasket.reduce((acc, item) => {
+          return acc + item.price * item.quantity;
+        }, 0),
+        items: {
+          create: selectedBasket.map((item) => {
+            return {
+              quantity: item.quantity,
+              product: {
+                connect: {
+                  id: item.productId,
+                },
+              },
+              productId: item.productId,
+              subtotal: item.price * item.quantity,
+            };
+          }),
+        },
+      },
+    });
+
+    await this.prisma.basket.deleteMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    return order;
+  }
+
   async getOrderById(id: number) {
     const order = await this.prisma.order.findUnique({
       where: {
@@ -65,10 +122,10 @@ export class OrdersService {
     return items;
   }
 
-  async addToBasket(email: string, dto: CreateBasketDto) {
+  async addToBasket(dto: CreateBasketDto) {
     const user = await this.prisma.user.findUnique({
       where: {
-        email: email,
+        email: dto.email,
       },
     });
 
@@ -144,7 +201,7 @@ export class OrdersService {
     const order = await this.prisma.order.create({
       data: {
         userId: user.id,
-        deliveryFee: 30,
+        deliveryFee: 15,
         discount: 0,
         status: 'PENDING',
         totalPriceAmount: totalPrice,
@@ -184,7 +241,7 @@ export class OrdersService {
   //     const order = await this.prisma.order.create({
   //       data: {
   //         userId: user.id,
-  //         deliveryFee: 0,
+  //         deliveryFee: 15,
   //         discount: 0,
   //         status: "PENDING",
   //         totalPriceAmount: basket.reduce((acc, item) => {

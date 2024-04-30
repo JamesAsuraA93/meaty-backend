@@ -95,11 +95,15 @@ export class AuthService {
 
   // email: string,
   // password: string,
-  async signIn(data: LoginUserDto) {
-    // console.log('data', data);
+  async signIn(dto: LoginUserDto) {
+    console.log(dto);
+    // console.log({
+    //   email: data.email,
+    //   password: data.password,
+    // });
     const user = await this.prisma.user.findUnique({
       where: {
-        email: data.email,
+        email: dto.email,
       },
     });
 
@@ -114,7 +118,7 @@ export class AuthService {
     //   'data.password': data.password,
     // });
 
-    if (user?.password !== data.password) {
+    if (user?.password !== dto.password) {
       throw new UnauthorizedException();
     }
     const payload = { sub: user.id, email: user.email };

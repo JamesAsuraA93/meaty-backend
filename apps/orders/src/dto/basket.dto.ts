@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PaymentMethod } from '@prisma/client';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateBasketDto {
-  // @IsString()
-  // @IsNotEmpty()
-  // @ApiProperty({
-  //   description: 'The email of the product',
-  //   name: 'email',
-  // })
-  // email: string;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The email of the product',
+    name: 'email',
+  })
+  email: string;
 
   @IsString()
   @IsNotEmpty()
@@ -51,4 +52,78 @@ export class CreateOrderDto {
     name: 'basketId',
   })
   basketId: string[];
+
+  // Personal Information
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The firstname of the user',
+    name: 'firstname',
+  })
+  firstname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The lastname of the user',
+    name: 'lastname',
+  })
+  lastname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The phone of the user',
+    name: 'phone',
+  })
+  phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The email info of the user',
+    name: 'emailInfo',
+  })
+  emailInfo: string;
+
+  // Delivery Information
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The address of the user',
+    name: 'address',
+  })
+  address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The province of the user',
+    name: 'province',
+  })
+  province: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The district of the user',
+    name: 'district',
+  })
+  district: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The postal code of the user',
+    name: 'postalCode',
+  })
+  postalCode: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The paymentId of the product list',
+    name: 'paymentType',
+  })
+  paymentType: PaymentMethod;
 }
