@@ -240,24 +240,29 @@ export class AppService {
   }
 
   async getCommentByIdProduct(id: number) {
-    return await this.prisma.comment.findMany({
-      where: {
-        productId: id,
-      },
-    });
+    try {
+      return await this.prisma.comment.findMany({
+        where: {
+          productId: id,
+        },
+      });
+    } catch (error) {
+      // console.error(error);
+      return [];
+    }
   }
 
   async createComment(dto: CreateCommentDto) {
     return await this.prisma.comment.create({
       data: {
         comment: dto.comment,
-        // productId: dto.productId,
-        sentimentScore: dto.sentimentScore,
-        product: {
-          connect: {
-            id: dto.productId,
-          },
-        },
+        productId: +dto.productId,
+        sentimentScore: Number(dto.sentimentScore),
+        // product: {
+        //   connect: {
+        //     id: dto.productId,
+        //   },
+        // },
       },
     });
   }
