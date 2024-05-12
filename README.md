@@ -83,10 +83,3 @@ We encourage you to contribute to `meaty-backend`! Please check out the [CONTRIB
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Contact
-
-For any additional questions or comments, you can reach out to us via email at [your-email@example.com].
-```
-
-This README file includes comprehensive sections on getting started, setting up the environment, stopping the servers, and adding initial data to the database, as well as sections on contributing and licensing. Make sure to replace placeholder text like GitHub links and email addresses with actual data specific to your project.
